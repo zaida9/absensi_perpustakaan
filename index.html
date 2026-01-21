@@ -69,8 +69,17 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <!-- FORM -->
 <div id="form" class="card">
+
+<select id="jenjang">
+<option value="">Pilih Jenjang</option>
+<option>Pra TK</option>
+<option>TK</option>
+<option>SD</option>
+<option>SMP</option>
+</select>
+
+<input id="kelas" placeholder="Kelas (contoh: A, 1A, 7B)">
 <input id="nama" placeholder="Nama">
-<input id="kelas" placeholder="Kelas">
 
 <select id="tujuan">
 <option value="">Tujuan</option>
@@ -80,12 +89,12 @@ tbody tr:nth-child(even){background:#f7f7ff}
 </select>
 
 <div class="moods">
-<div class="mood" data="😄 Senang">😄</div>
-<div class="mood" data="😢 Sedih">😢</div>
-<div class="mood" data="😡 Marah">😡</div>
-<div class="mood" data="😴 Lelah">😴</div>
-<div class="mood" data="🤯 Stres">🤯</div>
-<div class="mood" data="😐 Biasa">😐</div>
+<div class="mood" data-mood="😄 Senang">😄</div>
+<div class="mood" data-mood="😢 Sedih">😢</div>
+<div class="mood" data-mood="😡 Marah">😡</div>
+<div class="mood" data-mood="😴 Lelah">😴</div>
+<div class="mood" data-mood="🤯 Stres">🤯</div>
+<div class="mood" data-mood="😐 Biasa">😐</div>
 </div>
 
 <button class="submit" onclick="simpan()">Absen 💖</button>
@@ -93,9 +102,7 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <!-- DATA -->
 <div id="data" class="card" style="display:none">
-<h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">
-📅 Pilih Tanggal
-</h3>
+<h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">📅 Pilih Tanggal</h3>
 
 <input type="date" id="pilihTanggal" onchange="tampil()">
 
@@ -103,8 +110,9 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <thead>
 <tr>
 <th>No</th>
-<th>Nama</th>
+<th>Jenjang</th>
 <th>Kelas</th>
+<th>Nama</th>
 <th>Tujuan</th>
 <th>Mood</th>
 <th>Waktu</th>
@@ -126,8 +134,7 @@ document.querySelectorAll(".mood").forEach(m=>{
     m.onclick=()=>{
         document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
         m.classList.add("active");
-        moodDipilih=m.dataset ? m.dataset.mood : m.getAttribute("data");
-        moodDipilih=m.getAttribute("data");
+        moodDipilih=m.dataset.mood;
     }
 });
 
@@ -136,12 +143,13 @@ function getData(){
 }
 
 function simpan(){
-    const nama=namaInput.value;
-    const kelas=kelasInput.value;
-    const tujuan=tujuanSelect.value;
+    const jenjang=document.getElementById("jenjang").value;
+    const kelas=document.getElementById("kelas").value;
+    const nama=document.getElementById("nama").value;
+    const tujuan=document.getElementById("tujuan").value;
 
-    if(!nama||!kelas||!tujuan||!moodDipilih){
-        alert("Lengkapi semua 😡");
+    if(!jenjang||!kelas||!nama||!tujuan||!moodDipilih){
+        alert("Lengkapi semua data 😡");
         return;
     }
 
@@ -149,13 +157,12 @@ function simpan(){
     if(!allData[today]) allData[today]=[];
 
     allData[today].push({
-        nama,kelas,tujuan,
+        jenjang,kelas,nama,tujuan,
         mood:moodDipilih,
         waktu:new Date().toLocaleTimeString()
     });
 
     localStorage.setItem("absensiHarian",JSON.stringify(allData));
-    tampil();
     showTab("data");
 }
 
@@ -168,7 +175,7 @@ function tampil(){
     const data=allData[tanggal]||[];
 
     if(data.length===0){
-        list.innerHTML=`<tr><td colspan="6">Tidak ada data</td></tr>`;
+        list.innerHTML=`<tr><td colspan="7">Tidak ada data</td></tr>`;
         return;
     }
 
@@ -176,8 +183,9 @@ function tampil(){
         list.innerHTML+=`
         <tr>
         <td>${i+1}</td>
-        <td>${a.nama}</td>
+        <td>${a.jenjang}</td>
         <td>${a.kelas}</td>
+        <td>${a.nama}</td>
         <td>${a.tujuan}</td>
         <td>${a.mood}</td>
         <td>${a.waktu}</td>
@@ -192,10 +200,6 @@ function showTab(tab){
     btnData.classList.toggle("active",tab==="data");
     tampil();
 }
-
-const namaInput=document.getElementById("nama");
-const kelasInput=document.getElementById("kelas");
-const tujuanSelect=document.getElementById("tujuan");
 
 tampil();
 </script>
