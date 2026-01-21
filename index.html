@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Perpustakaan 📚</title>
+    <style>
+        /* ============================================
+           IMPORT FONT LUCU DAN RAMAH ANAK
+        ============================================ */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fredoka:wght@400;600&display=swap');
+
+        /* ============================================
+           RESET & GLOBAL STYLES
+        ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ============================================
+           CONTAINER UTAMA
+        ============================================ */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           HEADER SECTION - JUDUL & SUBJUDUL
+        ============================================ */
+        .header {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3em;
+            color: #6b46c1;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #ff6b9d;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           FORM ABSENSI - CARD UTAMA
+        ============================================ */
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: #6b46c1;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ============================================
+           INPUT FIELDS - FORM INPUTS
+        ============================================ */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #6b46c1;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid #e0c3fc;
+            border-radius: 15px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            background: #f9f7ff;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #a8edea;
+            box-shadow: 0 0 20px rgba(168, 237, 234, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* ============================================
+           MOOD SELECTION - EMOJI BESAR & INTERAKTIF
+        ============================================ */
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .mood-option {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animasi gelombang saat hover */
+        .mood-option::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .mood-option:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .mood-option:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Style untuk mood yang dipilih */
+        .mood-option.selected {
+            border-color: #6b46c1;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            box-shadow: 0 0 30px rgba(107, 70, 193, 0.5);
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .mood-emoji {
+            font-size: 4em;
+            display: block;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mood-label {
+            font-weight: 600;
+            color: #6b46c1;
+            font-size: 1em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           TOMBOL ABSEN - SUBMIT BUTTON
+        ============================================ */
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .submit-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           ATTENDANCE LIST - DAFTAR ABSENSI
+        ============================================ */
+        .attendance-list {
+            margin-top: 30px;
+        }
+
+        .attendance-list h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: #6b46c1;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* ============================================
+           ATTENDANCE CARD - KARTU ABSENSI INDIVIDUAL
+        ============================================ */
+        .attendance-card {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+            border: 3px solid transparent;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .attendance-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: #e0c3fc;
+        }
+
+        /* Emoji di kartu absensi */
+        .card-emoji {
+            font-size: 5em;
+            text-align: center;
+            animation: rotate 3s infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-info h3 {
+            font-family: 'Fredoka', sans-serif;
+            color: #6b46c1;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .card-info p {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .card-info .highlight {
+            color: #ff6b9d;
+            font-weight: 600;
+        }
+
+        .card-time {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Badge untuk status */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .status-hadir {
+            background: #a8edea;
+            color: #0984e3;
+        }
+
+        .status-izin {
+            background: #ffeaa7;
+            color: #fdcb6e;
+        }
+
+        .status-sakit {
+            background: #fab1a0;
+            color: #d63031;
+        }
+
+        /* ============================================
+           EMPTY STATE - KETIKA BELUM ADA ABSENSI
+        ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.2em;
+        }
+
+        /* ============================================
+           NOTIFICATION - ALERT LUCU
+        ============================================ */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            color: #6b46c1;
+            font-size: 1.1em;
+            display: none;
+            z-index: 1000;
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN - MOBILE & TABLET
+        ============================================ */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 1.1em;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .mood-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .mood-emoji {
+                font-size: 3em;
+            }
+
+            .attendance-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .card-emoji {
+                font-size: 4em;
+            }
+
+            .notification {
+                right: 10px;
+                left: 10px;
+                top: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .mood-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .submit-btn {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         NOTIFICATION - ALERT POPUP
+    ============================================ -->
+    <div class="notification" id="notification"></div>
+
+    <!-- ============================================
+         CONTAINER UTAMA
+    ============================================ -->
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📚 Absensi Perpustakaan 📚</h1>
+            <p>Hari ini kamu merasa bagaimana? 💖</p>
+        </div>
+
+        <!-- FORM ABSENSI -->
+        <div class="form-card">
+            <form id="attendanceForm">
+                <!-- DATA DIRI -->
+                <div class="form-section">
+                    <h2>📝 Data Diri</h2>
+                    
+                    <div class="input-group">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" placeholder="Masukkan nama lengkap kamu" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="kelas">Kelas</label>
+                        <select id="kelas" required>
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="1A">1A</option>
+                            <option value="1B">1B</option>
+                            <option value="2A">2A</option>
+                            <option value="2B">2B</option>
+                            <option value="3A">3A</option>
+                            <option value="3B">3B</option>
+                            <option value="4A">4A</option>
+                            <option value="4B">4B</option>
+                            <option value="5A">5A</option>
+                            <option value="5B">5B</option>
+                            <option value="6A">6A</option>
+                            <option value="6B">6B</option>
+                            <option value="7A">7A</option>
+                            <option value="7B">7B</option>
+                            <option value="8A">8A</option>
+                            <option value="8B">8B</option>
+                            <option value="9A">9A</option>
+                            <option value="9B">9B</option>
+                            <option value="10 IPA 1">10 IPA 1</option>
+                            <option value="10 IPA 2">10 IPA 2</option>
+                            <option value="10 IPS 1">10 IPS 1</option>
+                            <option value="10 IPS 2">10 IPS 2</option>
+                            <option value="11 IPA 1">11 IPA 1</option>
+                            <option value="11 IPA 2">11 IPA 2</option>
+                            <option value="11 IPS 1">11 IPS 1</option>
+                            <option value="11 IPS 2">11 IPS 2</option>
+                            <option value="12 IPA 1">12 IPA 1</option>
+                            <option value="12 IPA 2">12 IPA 2</option>
+                            <option value="12 IPS 1">12 IPS 1</option>
+                            <option value="12 IPS 2">12 IPS 2</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tujuan">Tujuan ke Perpustakaan</label>
+                        <select id="tujuan" required>
+                            <option value="">-- Pilih Tujuan --</option>
+                            <option value="Membaca">📖 Membaca</option>
+                            <option value="Pinjam Buku">📚 Pinjam Buku</option>
+                            <option value="Tugas">✏️ Mengerjakan Tugas</option>
+                            <option value="Mencari Referensi">🔍 Mencari Referensi</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="status">Status Kehadiran</label>
+                        <select id="status" required>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Hadir">✅ Hadir</option>
+                            <option value="Izin">📝 Izin</option>
+                            <option value="Sakit">🤒 Sakit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PILIH MOOD -->
+                <div class="form-section">
+                    <h2>😊 Pilih Mood Kamu Hari Ini</h2>
+                    
+                    <div class="mood-grid">
+                        <div class="mood-option" data-mood="Senang" data-emoji="😄">
+                            <span class="mood-emoji">😄</span>
+                            <span class="mood-label">Senang</span>
+                        </div>
+                        <div class="mood-option" data-mood="Biasa Aja" data-emoji="😐">
+                            <span class="mood-emoji">😐</span>
+                            <span class="mood-label">Biasa Aja</span>
+                        </div>
+                        <div class="mood-option" data-mood="Sedih" data-emoji="😢">
+                            <span class="mood-emoji">😢</span>
+                            <span class="mood-label">Sedih</span>
+                        </div>
+                        <div class="mood-option" data-mood="Marah" data-emoji="😡">
+                            <span class="mood-emoji">😡</span>
+                            <span class="mood-label">Marah</span>
+                        </div>
+                        <div class="mood-option" data-mood="Lelah" data-emoji="😴">
+                            <span class="mood-emoji">😴</span>
+                            <span class="mood-label">Lelah</span>
+                        </div>
+                        <div class="mood-option" data-mood="Stres" data-emoji="🤯">
+                            <span class="mood-emoji">🤯</span>
+                            <span class="mood-label">Stres</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOMBOL SUBMIT -->
+                <button type="submit" class="submit-btn">Absen Sekarang 💖</button>
+            </form>
+        </div>
+
+        <!-- DAFTAR ABSENSI -->
+        <div class="attendance-list">
+            <h2>📋 Daftar Absensi Hari Ini</h2>
+            <div id="attendanceContainer"></div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT - LOGIKA APLIKASI
+    ============================================ -->
+    <script>
+        // ============================================
+        // VARIABEL GLOBAL
+        // ============================================
+        let selectedMood = null; // Untuk menyimpan mood yang dipilih
+        let selectedMoodEmoji = null; // Untuk menyimpan emoji mood yang dipilih
+        let attendanceData = []; // Array untuk menyimpan semua data absensi
+
+        // ============================================
+        // DUMMY DATA - DATA ABSENSI AWAL
+        // ============================================
+        const dummyData = [
+            {
+                nama: "Aisyah Putri",
+                kelas: "5A",
+                tujuan: "Membaca",
+                status: "Hadir",
+                mood: "Senang",
+                emoji: "😄",
+                waktu: "08:15:30"
+            },
+            {
+                nama: "Budi Santoso",
+                kelas: "7B",
+                tujuan: "Pinjam Buku",
+                status: "Hadir",
+                mood: "Biasa Aja",
+                emoji: "😐",
+                waktu: "09:20:15"
+            },
+            {
+                nama: "Citra Dewi",
+                kelas: "11 IPA 1",
+                tujuan: "Tugas",
+                status: "Hadir",
+                mood: "Stres",
+                emoji: "🤯",
+                waktu: "10:05:42"
+            }
+        ];
+
+        // Load dummy data saat halaman pertama kali dibuka
+        attendanceData = [...dummyData];
+
+        // ============================================
+        // FUNGSI: PILIH MOOD (KLIK EMOJI)
+        // ============================================
+        const moodOptions = document.querySelectorAll('.mood-option');
+        
+        moodOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Hapus class 'selected' dari semua mood
+                moodOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Tambahkan class 'selected' ke mood yang diklik
+                this.classList.add('selected');
+                
+                // Simpan mood dan emoji yang dipilih
+                selectedMood = this.getAttribute('data-mood');
+                selectedMoodEmoji = this.getAttribute('data-emoji');
+                
+                console.log('Mood dipilih:', selectedMood, selectedMoodEmoji);
+            });
+        });
+
+        // ============================================
+        // FUNGSI: TAMPILKAN NOTIFIKASI
+        // ============================================
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            // Hilangkan notifikasi setelah 3 detik
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============================================
+        // FUNGSI: DAPATKAN WAKTU SAAT INI
+        // ============================================
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // ============================================
+        // FUNGSI: RENDER SEMUA KARTU ABSENSI
+        // ============================================
+        function renderAttendance() {
+            const container = document.getElementById('attendanceContainer');
+            
+            // Jika tidak ada data, tampilkan empty state
+            if (attendanceData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>Belum ada yang absen hari ini...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render semua kartu absensi (data terbaru di atas)
+            container.innerHTML = attendanceData
+                .slice()
+                .reverse()
+                .map(data => createAttendanceCard(data))
+                .join('');
+        }
+
+        // ============================================
+        // FUNGSI: BUAT KARTU ABSENSI INDIVIDUAL
+        // ============================================
+        function createAttendanceCard(data) {
+            // Tentukan class badge berdasarkan status
+            let statusClass = 'status-hadir';
+            if (data.status === 'Izin') statusClass = 'status-izin';
+            if (data.status === 'Sakit') statusClass = 'status-sakit';
+            
+            return `
+                <div class="attendance-card">
+                    <div class="card-emoji">${data.emoji}</div>
+                    <div class="card-info">
+                        <h3>${data.nama}</h3>
+                        <p><strong>Kelas:</strong> <span class="highlight">${data.kelas}</span></p>
+                        <p><strong>Tujuan:</strong> ${data.tujuan}</p>
+                        <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${data.status}</span></p>
+                        <p><strong>Mood:</strong> ${data.emoji} ${data.mood}</p>
+                        <p class="card-time">⏰ ${data.waktu}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // FUNGSI: HANDLE SUBMIT FORM
+        // ============================================
+        const form = document.getElementById('attendanceForm');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah reload halaman
+            
+            // Ambil semua nilai dari form
+            const nama = document.getElementById('nama').value;
+            const kelas = document.getElementById('kelas').value;
+            const tujuan = document.getElementById('tujuan').value;
+            const status = document.getElementById('status').value;
+            
+            // VALIDASI: Cek apakah mood sudah dipilih
+            if (!selectedMood || !selectedMoodEmoji) {
+                showNotification('Yuk pilih mood kamu dulu! 😊');
+                return;
+            }
+            
+            // Buat object data absensi baru
+            const newAttendance = {
+                nama: nama,
+                kelas: kelas,
+                tujuan: tujuan.replace(/[📖📚✏️🔍]/g, '').trim(), // Hapus emoji dari tujuan
+                status: status,
+                mood: selectedMood,
+                emoji: selectedMoodEmoji,
+                waktu: getCurrentTime()
+            };
+            
+            // Tambahkan ke array data
+            attendanceData.push(newAttendance);
+            
+            // Render ulang daftar absensi
+            renderAttendance();
+            
+            // Tampilkan notifikasi sukses berdasarkan mood
+            let successMessage = '';
+            switch(selectedMood) {
+                case 'Senang':
+                    successMessage = 'Yeay! Tetap semangat ya! 🎉';
+                    break;
+                case 'Biasa Aja':
+                    successMessage = 'Oke, semoga harimu menyenangkan! 😊';
+                    break;
+                case 'Sedih':
+                    successMessage = 'Semoga harimu segera membaik ya! 💕';
+                    break;
+                case 'Marah':
+                    successMessage = 'Tenang ya, semuanya akan baik-baik saja! 🌈';
+                    break;
+                case 'Lelah':
+                    successMessage = 'Istirahat yang cukup ya! 😴💤';
+                    break;
+                case 'Stres':
+                    successMessage = 'Tarik napas dulu, kamu pasti bisa! 💪';
+                    break;
+                default:
+                    successMessage = 'Terima kasih sudah absen! 💖';
+            }
+            
+            showNotification(successMessage);
+            
+            // Reset form dan mood selection
+            form.reset();
+            moodOptions.forEach(opt => opt.classList.remove('selected'));
+            selectedMood = null;
+            selectedMoodEmoji = null;
+            
+            // Scroll ke daftar absensi
+            document.querySelector('.attendance-list').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        // ============================================
+        // RENDER AWAL - TAMPILKAN DUMMY DATA
+        // ============================================
+        renderAttendance();
+
+        // ============================================
+        // CONSOLE LOG - INFO UNTUK DEVELOPER
+        // ============================================
+        console.log('📚 Sistem Absensi Perpustakaan berhasil dimuat!');
+        console.log('💡 Tips: Pilih emoji mood dengan mengklik salah satu emoji');
+        console.log('🎨 Desain: Cute & Friendly untuk siswa SD-SMA');
