@@ -17,54 +17,40 @@ body{
 .header{
     background:white;border-radius:25px;padding:30px;text-align:center;margin-bottom:20px;
 }
-.header h1{font-family:'Fredoka';color:#6b46c1;margin-bottom:5px}
-.header p{color:#ff6b9d;font-weight:600}
-
-.tab{
-    display:flex;gap:15px;justify-content:center;margin-bottom:20px;
-}
+.header h1{font-family:'Fredoka';color:#6b46c1}
+.tab{display:flex;gap:15px;justify-content:center;margin-bottom:20px}
 .tab button{
     padding:12px 25px;border:none;border-radius:20px;
-    font-family:'Fredoka';cursor:pointer;background:white;
+    font-family:'Fredoka';cursor:pointer;background:white
 }
 .tab .active{background:#ff6b9d;color:white}
-
-.card{
-    background:white;padding:25px;border-radius:25px;
-}
-
+.card{background:white;padding:25px;border-radius:25px}
 input,select{
-    width:100%;padding:12px;margin-top:10px;border-radius:15px;border:2px solid #ddd;
+    width:100%;padding:12px;margin-top:10px;border-radius:15px;border:2px solid #ddd
 }
-
 .moods{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px;
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:10px;margin-top:15px
 }
 .mood{
     background:#ffeaa7;border-radius:20px;padding:20px;
-    text-align:center;font-size:32px;cursor:pointer;
+    text-align:center;font-size:32px;cursor:pointer
 }
 .mood.active{
-    background:#a8edea;box-shadow:0 0 15px rgba(0,0,0,.2);
+    background:#a8edea;box-shadow:0 0 15px rgba(0,0,0,.2)
 }
-
 button.submit{
     margin-top:20px;width:100%;padding:15px;font-size:18px;
     font-family:'Fredoka';border:none;border-radius:20px;
-    background:#ff6b9d;color:white;cursor:pointer;
+    background:#ff6b9d;color:white;cursor:pointer
 }
-
-/* TABLE */
 table{
     width:100%;border-collapse:collapse;margin-top:20px;
-    overflow:hidden;border-radius:20px;
+    border-radius:20px;overflow:hidden
 }
-thead{
-    background:#ff6b9d;color:white;font-family:'Fredoka';
-}
+thead{background:#ff6b9d;color:white;font-family:'Fredoka'}
 th,td{padding:12px;text-align:center}
 tbody tr:nth-child(even){background:#f7f7ff}
-tbody tr:hover{background:#e0f7fa}
 </style>
 </head>
 
@@ -72,58 +58,60 @@ tbody tr:hover{background:#e0f7fa}
 <div class="container">
 
 <div class="header">
-    <h1>📚 Absensi Perpustakaan</h1>
-    <p>Isi absensi & pilih mood kamu hari ini 💖</p>
+<h1>📚 Absensi Perpustakaan</h1>
+<p>Data otomatis dipisah per hari ✨</p>
 </div>
 
 <div class="tab">
-    <button id="btnForm" class="active" onclick="showTab('form')">📝 Form</button>
-    <button id="btnData" onclick="showTab('data')">📊 Data</button>
+<button id="btnForm" class="active" onclick="showTab('form')">📝 Form</button>
+<button id="btnData" onclick="showTab('data')">📊 Data</button>
 </div>
 
 <!-- FORM -->
 <div id="form" class="card">
-    <input id="nama" placeholder="Nama Lengkap">
-    <input id="kelas" placeholder="Kelas">
+<input id="nama" placeholder="Nama">
+<input id="kelas" placeholder="Kelas">
 
-    <select id="tujuan">
-        <option value="">Tujuan ke Perpustakaan</option>
-        <option>Membaca</option>
-        <option>Pinjam Buku</option>
-        <option>Mengerjakan Tugas</option>
-    </select>
+<select id="tujuan">
+<option value="">Tujuan</option>
+<option>Membaca</option>
+<option>Pinjam Buku</option>
+<option>Tugas</option>
+</select>
 
-    <div class="moods">
-        <div class="mood" data="😄 Senang">😄</div>
-        <div class="mood" data="😢 Sedih">😢</div>
-        <div class="mood" data="😡 Marah">😡</div>
-        <div class="mood" data="😴 Lelah">😴</div>
-        <div class="mood" data="🤯 Stres">🤯</div>
-        <div class="mood" data="😐 Biasa">😐</div>
-    </div>
+<div class="moods">
+<div class="mood" data="😄 Senang">😄</div>
+<div class="mood" data="😢 Sedih">😢</div>
+<div class="mood" data="😡 Marah">😡</div>
+<div class="mood" data="😴 Lelah">😴</div>
+<div class="mood" data="🤯 Stres">🤯</div>
+<div class="mood" data="😐 Biasa">😐</div>
+</div>
 
-    <button class="submit" onclick="simpan()">Absen Sekarang 💕</button>
+<button class="submit" onclick="simpan()">Absen 💖</button>
 </div>
 
 <!-- DATA -->
 <div id="data" class="card" style="display:none">
-    <h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">
-        📋 Data Absensi Hari Ini
-    </h3>
+<h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">
+📅 Pilih Tanggal
+</h3>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Kelas</th>
-                <th>Tujuan</th>
-                <th>Mood</th>
-                <th>Waktu</th>
-            </tr>
-        </thead>
-        <tbody id="list"></tbody>
-    </table>
+<input type="date" id="pilihTanggal" onchange="tampil()">
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Nama</th>
+<th>Kelas</th>
+<th>Tujuan</th>
+<th>Mood</th>
+<th>Waktu</th>
+</tr>
+</thead>
+<tbody id="list"></tbody>
+</table>
 </div>
 
 </div>
@@ -131,74 +119,83 @@ tbody tr:hover{background:#e0f7fa}
 <script>
 let moodDipilih="";
 
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("pilihTanggal").value = today;
+
 document.querySelectorAll(".mood").forEach(m=>{
     m.onclick=()=>{
         document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
         m.classList.add("active");
+        moodDipilih=m.dataset ? m.dataset.mood : m.getAttribute("data");
         moodDipilih=m.getAttribute("data");
     }
 });
 
-function simpan(){
-    const nama=document.getElementById("nama").value;
-    const kelas=document.getElementById("kelas").value;
-    const tujuan=document.getElementById("tujuan").value;
+function getData(){
+    return JSON.parse(localStorage.getItem("absensiHarian")) || {};
+}
 
-    if(!nama || !kelas || !tujuan || !moodDipilih){
-        alert("Lengkapi semua data ya 😡");
+function simpan(){
+    const nama=namaInput.value;
+    const kelas=kelasInput.value;
+    const tujuan=tujuanSelect.value;
+
+    if(!nama||!kelas||!tujuan||!moodDipilih){
+        alert("Lengkapi semua 😡");
         return;
     }
 
-    const data={
+    const allData=getData();
+    if(!allData[today]) allData[today]=[];
+
+    allData[today].push({
         nama,kelas,tujuan,
         mood:moodDipilih,
-        waktu:new Date().toLocaleString()
-    };
+        waktu:new Date().toLocaleTimeString()
+    });
 
-    const arr=JSON.parse(localStorage.getItem("absensi"))||[];
-    arr.push(data);
-    localStorage.setItem("absensi",JSON.stringify(arr));
-
+    localStorage.setItem("absensiHarian",JSON.stringify(allData));
     tampil();
-    showTab('data');
-
-    document.getElementById("nama").value="";
-    document.getElementById("kelas").value="";
-    document.getElementById("tujuan").value="";
-    moodDipilih="";
-    document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+    showTab("data");
 }
 
 function tampil(){
+    const tanggal=document.getElementById("pilihTanggal").value;
     const list=document.getElementById("list");
     list.innerHTML="";
-    const arr=JSON.parse(localStorage.getItem("absensi"))||[];
 
-    if(arr.length===0){
-        list.innerHTML=`<tr><td colspan="6">Belum ada data</td></tr>`;
+    const allData=getData();
+    const data=allData[tanggal]||[];
+
+    if(data.length===0){
+        list.innerHTML=`<tr><td colspan="6">Tidak ada data</td></tr>`;
         return;
     }
 
-    arr.forEach((a,i)=>{
+    data.forEach((a,i)=>{
         list.innerHTML+=`
         <tr>
-            <td>${i+1}</td>
-            <td>${a.nama}</td>
-            <td>${a.kelas}</td>
-            <td>${a.tujuan}</td>
-            <td>${a.mood}</td>
-            <td>${a.waktu}</td>
+        <td>${i+1}</td>
+        <td>${a.nama}</td>
+        <td>${a.kelas}</td>
+        <td>${a.tujuan}</td>
+        <td>${a.mood}</td>
+        <td>${a.waktu}</td>
         </tr>`;
     });
 }
 
 function showTab(tab){
-    document.getElementById("form").style.display = tab==="form"?"block":"none";
-    document.getElementById("data").style.display = tab==="data"?"block":"none";
+    form.style.display = tab==="form"?"block":"none";
+    data.style.display = tab==="data"?"block":"none";
     btnForm.classList.toggle("active",tab==="form");
     btnData.classList.toggle("active",tab==="data");
     tampil();
 }
+
+const namaInput=document.getElementById("nama");
+const kelasInput=document.getElementById("kelas");
+const tujuanSelect=document.getElementById("tujuan");
 
 tampil();
 </script>
