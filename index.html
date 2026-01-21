@@ -5,152 +5,208 @@
 <title>Absensi Perpustakaan 📚</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins&display=swap" rel="stylesheet">
+
 <style>
-body {
-    font-family: Poppins, sans-serif;
-    background: #f2f6ff;
-    padding: 20px;
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#a8edea,#fed6e3);
+    padding:20px;
 }
-h1 { text-align: center; }
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 20px;
+.container{max-width:900px;margin:auto}
+.header{
+    background:white;
+    border-radius:25px;
+    padding:30px;
+    text-align:center;
+    margin-bottom:20px;
 }
-input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+.header h1{font-family:'Fredoka';color:#6b46c1}
+
+.tab{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    margin-bottom:20px;
 }
-button {
-    background: #6c63ff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+.tab button{
+    padding:12px 25px;
+    border:none;
+    border-radius:20px;
+    font-family:'Fredoka';
+    cursor:pointer;
 }
-.moods {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
+.tab .active{background:#ff6b9d;color:white}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:25px;
 }
-.mood {
-    font-size: 32px;
-    text-align: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 12px;
-    background: #eee;
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:15px;
+    border:2px solid #ddd;
 }
-.mood.active {
-    background: #6c63ff;
+
+.moods{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:15px;
 }
-.list {
-    margin-top: 20px;
+.mood{
+    background:#ffeaa7;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    font-size:32px;
+    cursor:pointer;
 }
-.item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 14px;
-    margin-bottom: 10px;
+.mood.active{
+    background:#a8edea;
+    box-shadow:0 0 15px rgba(0,0,0,.2);
 }
+
+button.submit{
+    margin-top:20px;
+    width:100%;
+    padding:15px;
+    font-size:18px;
+    font-family:'Fredoka';
+    border:none;
+    border-radius:20px;
+    background:#ff6b9d;
+    color:white;
+    cursor:pointer;
+}
+
+.list{margin-top:20px}
+.item{
+    background:#f9f9ff;
+    padding:15px;
+    border-radius:20px;
+    margin-bottom:10px;
+}
+.item span{font-size:26px}
 </style>
 </head>
 
 <body>
+<div class="container">
 
+<div class="header">
 <h1>📚 Absensi Perpustakaan</h1>
-
-<div class="card">
-    <input id="nama" placeholder="Nama">
-    <input id="kelas" placeholder="Kelas">
-    <select id="tujuan">
-        <option value="">Tujuan</option>
-        <option>Membaca</option>
-        <option>Pinjam Buku</option>
-        <option>Tugas</option>
-    </select>
-
-    <div class="moods">
-        <div class="mood" data-mood="Senang">😄</div>
-        <div class="mood" data-mood="Sedih">😢</div>
-        <div class="mood" data-mood="Marah">😡</div>
-        <div class="mood" data-mood="Lelah">😴</div>
-        <div class="mood" data-mood="Stres">🤯</div>
-        <div class="mood" data-mood="Biasa">😐</div>
-    </div>
-
-    <button onclick="simpan()">ABSEN</button>
+<p>Hari ini kamu merasa apa?</p>
 </div>
 
-<div class="card">
-    <h3>📋 Data Absensi</h3>
-    <div id="list" class="list"></div>
+<div class="tab">
+<button id="btnForm" class="active" onclick="showTab('form')">📝 Form</button>
+<button id="btnData" onclick="showTab('data')">📊 Data</button>
+</div>
+
+<!-- FORM -->
+<div id="form" class="card">
+<input id="nama" placeholder="Nama">
+<input id="kelas" placeholder="Kelas">
+<select id="tujuan">
+<option value="">Tujuan</option>
+<option>Membaca</option>
+<option>Pinjam Buku</option>
+<option>Tugas</option>
+</select>
+
+<div class="moods">
+<div class="mood" data="😄 Senang">😄</div>
+<div class="mood" data="😢 Sedih">😢</div>
+<div class="mood" data="😡 Marah">😡</div>
+<div class="mood" data="😴 Lelah">😴</div>
+<div class="mood" data="🤯 Stres">🤯</div>
+<div class="mood" data="😐 Biasa">😐</div>
+</div>
+
+<button class="submit" onclick="simpan()">Absen 💖</button>
+</div>
+
+<!-- DATA -->
+<div id="data" class="card" style="display:none">
+<h3>📋 Data Absensi</h3>
+<div id="list" class="list"></div>
+</div>
+
 </div>
 
 <script>
-let moodDipilih = "";
+let mood="";
 
-document.querySelectorAll(".mood").forEach(el => {
-    el.onclick = () => {
-        document.querySelectorAll(".mood").forEach(m => m.classList.remove("active"));
-        el.classList.add("active");
-        moodDipilih = el.dataset.mood + " " + el.innerText;
+document.querySelectorAll('.mood').forEach(m=>{
+    m.onclick=()=>{
+        document.querySelectorAll('.mood').forEach(x=>x.classList.remove('active'));
+        m.classList.add('active');
+        mood=m.getAttribute('data');
     }
 });
 
-function simpan() {
-    const nama = document.getElementById("nama").value;
-    const kelas = document.getElementById("kelas").value;
-    const tujuan = document.getElementById("tujuan").value;
+function simpan(){
+    const nama=namaInput.value;
+    const kelas=kelasInput.value;
+    const tujuan=tujuanSelect.value;
 
-    if (!nama || !kelas || !tujuan || !moodDipilih) {
+    if(!nama||!kelas||!tujuan||!mood){
         alert("ISI SEMUA 😡");
         return;
     }
 
-    const data = {
-        nama,
-        kelas,
-        tujuan,
-        mood: moodDipilih,
-        waktu: new Date().toLocaleString()
+    const data={
+        nama,kelas,tujuan,mood,
+        waktu:new Date().toLocaleString()
     };
 
-    let absensi = JSON.parse(localStorage.getItem("absensi")) || [];
-    absensi.push(data);
-    localStorage.setItem("absensi", JSON.stringify(absensi));
+    const arr=JSON.parse(localStorage.getItem("absensi"))||[];
+    arr.push(data);
+    localStorage.setItem("absensi",JSON.stringify(arr));
 
-    tampilkan();
-    document.querySelector("form")?.reset();
+    tampil();
+    showTab('data');
 }
 
-function tampilkan() {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
+function tampil(){
+    const list=document.getElementById("list");
+    list.innerHTML="";
+    const arr=JSON.parse(localStorage.getItem("absensi"))||[];
 
-    const absensi = JSON.parse(localStorage.getItem("absensi")) || [];
-
-    if (absensi.length === 0) {
-        list.innerHTML = "<p>Belum ada data</p>";
+    if(arr.length==0){
+        list.innerHTML="<p>Belum ada data</p>";
         return;
     }
 
-    absensi.forEach(a => {
-        list.innerHTML += `
+    arr.forEach(a=>{
+        list.innerHTML+=`
         <div class="item">
-            <b>${a.nama}</b> (${a.kelas})<br>
-            ${a.tujuan}<br>
-            Mood: ${a.mood}<br>
-            <small>${a.waktu}</small>
+        <b>${a.nama}</b> (${a.kelas})<br>
+        ${a.tujuan}<br>
+        <span>${a.mood}</span><br>
+        <small>${a.waktu}</small>
         </div>`;
     });
 }
 
-tampilkan();
+function showTab(tab){
+    form.style.display=tab=='form'?'block':'none';
+    data.style.display=tab=='data'?'block':'none';
+    btnForm.classList.toggle('active',tab=='form');
+    btnData.classList.toggle('active',tab=='data');
+    tampil();
+}
+
+const namaInput=document.getElementById("nama");
+const kelasInput=document.getElementById("kelas");
+const tujuanSelect=document.getElementById("tujuan");
+
+tampil();
 </script>
 
 </body>
