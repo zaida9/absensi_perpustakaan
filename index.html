@@ -7,132 +7,192 @@
 
 <style>
 body{
-    font-family: Poppins, sans-serif;
-    background: linear-gradient(135deg,#a8edea,#fed6e3);
-    padding:20px;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#a8edea,#fed6e3);
+  padding:20px;
 }
 .container{
-    max-width:900px;
-    margin:auto;
+  max-width:900px;
+  margin:auto;
 }
 h1{text-align:center;color:#6b46c1}
 .card{
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-    margin-bottom:20px;
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
 }
-label{font-weight:600;color:#6b46c1}
-select,input{
-    width:100%;
-    padding:12px;
-    border-radius:12px;
-    border:2px solid #ddd;
-    margin-bottom:15px;
+label{font-weight:bold}
+input,select{
+  width:100%;
+  padding:10px;
+  margin:8px 0 15px;
 }
 .moods{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
-    gap:10px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;
 }
 .mood{
-    background:#ffeaa7;
-    padding:15px;
-    border-radius:15px;
-    font-size:2rem;
-    cursor:pointer;
-    text-align:center;
+  font-size:2rem;
+  text-align:center;
+  cursor:pointer;
+  background:#ffeaa7;
+  border-radius:10px;
+  padding:10px;
 }
 .mood.active{
-    background:#a8edea;
-    border:3px solid #6b46c1;
+  background:#6b46c1;
+  color:white;
 }
 button{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:15px;
-    background:#ff6b9d;
-    color:white;
-    font-size:1.2rem;
-    font-weight:bold;
-    cursor:pointer;
+  width:100%;
+  padding:12px;
+  font-size:1.1rem;
+  background:#ff6b9d;
+  border:none;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
 }
 table{
-    width:100%;
-    border-collapse:collapse;
+  width:100%;
+  border-collapse:collapse;
 }
 th,td{
-    padding:10px;
-    border-bottom:1px solid #ddd;
-    text-align:center;
+  border-bottom:1px solid #ddd;
+  padding:8px;
+  text-align:center;
 }
 th{
-    background:#6b46c1;
-    color:white;
-}
-.date-title{
-    text-align:center;
-    font-weight:bold;
-    margin:10px 0;
+  background:#6b46c1;
+  color:white;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-
 <h1>📚 Absensi Perpustakaan</h1>
 
 <div class="card">
 <label>Nama</label>
-<input id="nama" placeholder="Nama siswa">
+<input id="nama">
 
 <label>Kelas</label>
-<input id="kelas" placeholder="Contoh: 5A">
+<input id="kelas">
 
 <label>Tujuan</label>
 <select id="tujuan">
-<option value="">Pilih</option>
-<option>Membaca</option>
-<option>Pinjam Buku</option>
-<option>Tugas</option>
+  <option value="">Pilih</option>
+  <option>Membaca</option>
+  <option>Pinjam Buku</option>
+  <option>Tugas</option>
 </select>
 
-<label>Pilih Mood</label>
+<label>Mood</label>
 <div class="moods">
-<div class="mood" data-mood="😄 Senang">😄</div>
-<div class="mood" data-mood="😐 Biasa">😐</div>
-<div class="mood" data-mood="😢 Sedih">😢</div>
-<div class="mood" data-mood="😡 Marah">😡</div>
-<div class="mood" data-mood="😴 Lelah">😴</div>
-<div class="mood" data-mood="🤯 Stres">🤯</div>
+  <div class="mood" data-mood="😄 Senang">😄</div>
+  <div class="mood" data-mood="😐 Biasa">😐</div>
+  <div class="mood" data-mood="😢 Sedih">😢</div>
+  <div class="mood" data-mood="😡 Marah">😡</div>
+  <div class="mood" data-mood="😴 Lelah">😴</div>
+  <div class="mood" data-mood="🤯 Stres">🤯</div>
 </div>
 
-<button onclick="simpan()">Absen Sekarang</button>
+<button id="btnAbsen">Absen</button>
 </div>
 
 <div class="card">
-<div class="date-title" id="tanggalJudul"></div>
+<h3 id="judulTanggal"></h3>
 <table>
 <thead>
 <tr>
-<th>No</th>
-<th>Nama</th>
-<th>Kelas</th>
-<th>Tujuan</th>
-<th>Mood</th>
-<th>Jam</th>
+<th>No</th><th>Nama</th><th>Kelas</th><th>Tujuan</th><th>Mood</th><th>Jam</th>
 </tr>
 </thead>
-<tbody id="tabelData"></tbody>
+<tbody id="dataTabel"></tbody>
 </table>
 </div>
-
 </div>
 
 <script>
 let moodDipilih = "";
 
-do
+// === PILIH MOOD ===
+document.querySelectorAll(".mood").forEach(el=>{
+  el.addEventListener("click",()=>{
+    document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+    el.classList.add("active");
+    moodDipilih = el.dataset.mood;
+  });
+});
+
+// === UTIL ===
+function today(){
+  return new Date().toISOString().split("T")[0];
+}
+function getData(){
+  return JSON.parse(localStorage.getItem("absensi")||"{}");
+}
+function saveData(d){
+  localStorage.setItem("absensi",JSON.stringify(d));
+}
+
+// === SIMPAN ===
+document.getElementById("btnAbsen").addEventListener("click",()=>{
+  const nama = nama.value.trim();
+  const kelas = document.getElementById("kelas").value.trim();
+  const tujuan = tujuan.value;
+
+  if(!nama || !kelas || !tujuan || !moodDipilih){
+    alert("DATA BELUM LENGKAP");
+    return;
+  }
+
+  const data = getData();
+  const tgl = today();
+  if(!data[tgl]) data[tgl]=[];
+
+  data[tgl].push({
+    nama,kelas,tujuan,
+    mood:moodDipilih,
+    jam:new Date().toLocaleTimeString()
+  });
+
+  saveData(data);
+  tampil();
+
+  // reset
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  tujuan.value="";
+  moodDipilih="";
+  document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+});
+
+// === TAMPIL ===
+function tampil(){
+  const data = getData();
+  const tgl = today();
+  judulTanggal.innerText="Tanggal: "+tgl;
+  dataTabel.innerHTML="";
+
+  if(!data[tgl]) return;
+
+  data[tgl].forEach((d,i)=>{
+    dataTabel.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${d.nama}</td>
+      <td>${d.kelas}</td>
+      <td>${d.tujuan}</td>
+      <td>${d.mood}</td>
+      <td>${d.jam}</td>
+    </tr>`;
+  });
+}
+
+tampil();
+</script>
+</body>
+</html>
