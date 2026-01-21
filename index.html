@@ -9,47 +9,42 @@
 
 <style>
 body{
-    font-family:'Poppins',sans-serif;
-    background:linear-gradient(135deg,#a8edea,#fed6e3);
-    padding:20px;
+  font-family:Poppins;
+  background:linear-gradient(135deg,#a8edea,#fed6e3);
+  padding:20px;
 }
-.container{max-width:1000px;margin:auto}
+.container{max-width:900px;margin:auto}
 .header{
-    background:white;border-radius:25px;padding:30px;text-align:center;margin-bottom:20px;
+  background:white;padding:30px;border-radius:25px;
+  text-align:center;margin-bottom:20px
 }
-.header h1{font-family:'Fredoka';color:#6b46c1}
-.tab{display:flex;gap:15px;justify-content:center;margin-bottom:20px}
-.tab button{
-    padding:12px 25px;border:none;border-radius:20px;
-    font-family:'Fredoka';cursor:pointer;background:white
-}
-.tab .active{background:#ff6b9d;color:white}
+.header h1{font-family:Fredoka;color:#6b46c1}
 .card{background:white;padding:25px;border-radius:25px}
-input,select{
-    width:100%;padding:12px;margin-top:10px;border-radius:15px;border:2px solid #ddd
+select{
+  width:100%;padding:12px;margin-top:12px;
+  border-radius:15px;border:2px solid #ddd
 }
 .moods{
-    display:grid;grid-template-columns:repeat(3,1fr);
-    gap:10px;margin-top:15px
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-top:15px
 }
 .mood{
-    background:#ffeaa7;border-radius:20px;padding:20px;
-    text-align:center;font-size:32px;cursor:pointer
+  font-size:32px;padding:20px;border-radius:20px;
+  background:#ffeaa7;text-align:center;cursor:pointer
 }
-.mood.active{
-    background:#a8edea;box-shadow:0 0 15px rgba(0,0,0,.2)
-}
-button.submit{
-    margin-top:20px;width:100%;padding:15px;font-size:18px;
-    font-family:'Fredoka';border:none;border-radius:20px;
-    background:#ff6b9d;color:white;cursor:pointer
+.mood.active{background:#a8edea;box-shadow:0 0 10px rgba(0,0,0,.2)}
+button{
+  margin-top:20px;width:100%;padding:15px;
+  border:none;border-radius:20px;
+  background:#ff6b9d;color:white;
+  font-family:Fredoka;font-size:18px;cursor:pointer
 }
 table{
-    width:100%;border-collapse:collapse;margin-top:20px;
-    border-radius:20px;overflow:hidden
+  width:100%;margin-top:20px;
+  border-collapse:collapse;border-radius:20px;overflow:hidden
 }
-thead{background:#ff6b9d;color:white;font-family:'Fredoka'}
-th,td{padding:12px;text-align:center}
+thead{background:#ff6b9d;color:white}
+th,td{padding:10px;text-align:center}
 tbody tr:nth-child(even){background:#f7f7ff}
 </style>
 </head>
@@ -59,24 +54,24 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <div class="header">
 <h1>📚 Absensi Perpustakaan</h1>
-<p>welcome to the library ✨</p>
+<p>Pilih nama & emoji sesuai perasaanmu ✨</p>
 </div>
 
-<div class="tab">
-<button id="btnForm" class="active" onclick="showTab('form')">📝 Form</button>
-<button id="btnData" onclick="showTab('data')">📊 Data</button>
-</div>
+<div class="card">
+<select id="jenjang" onchange="updateKelas()">
+<option value="">Pilih Jenjang</option>
+<option>Pra-TK</option>
+<option>TK</option>
+<option>SD</option>
+<option>SMP</option>
+</select>
 
-<!-- FORM -->
-<div id="form" class="card">
-<input id="nama" placeholder="Nama">
-<input id="kelas" placeholder="Kelas">
+<select id="kelas" onchange="updateNama()">
+<option value="">Pilih Kelas</option>
+</select>
 
-<select id="tujuan">
-<option value="">Tujuan</option>
-<option>Membaca</option>
-<option>Pinjam Buku</option>
-<option>Tugas</option>
+<select id="nama">
+<option value="">Pilih Nama</option>
 </select>
 
 <div class="moods">
@@ -88,24 +83,17 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <div class="mood" data="😐 Biasa">😐</div>
 </div>
 
-<button class="submit" onclick="simpan()">Absen 💖</button>
-</div>
+<button onclick="absen()">Absen 💖</button>
 
-<!-- DATA -->
-<div id="data" class="card" style="display:none">
-<h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">
-📅 Pilih Tanggal
-</h3>
-
-<input type="date" id="pilihTanggal" onchange="tampil()">
+<input type="date" id="tanggal" style="margin-top:20px" onchange="tampilData()">
 
 <table>
 <thead>
 <tr>
 <th>No</th>
 <th>Nama</th>
+<th>Jenjang</th>
 <th>Kelas</th>
-<th>Tujuan</th>
 <th>Mood</th>
 <th>Waktu</th>
 </tr>
@@ -117,87 +105,71 @@ tbody tr:nth-child(even){background:#f7f7ff}
 </div>
 
 <script>
-let moodDipilih="";
+const siswa=[
+ {nis:"24001",nama:"Aisyah",jenjang:"SD",angkatan:2022},
+ {nis:"24002",nama:"Budi",jenjang:"SD",angkatan:2023},
+ {nis:"24003",nama:"Citra",jenjang:"SMP",angkatan:2023},
+ {nis:"24004",nama:"Dimas",jenjang:"TK",angkatan:2024},
+ {nis:"24005",nama:"Elisa",jenjang:"Pra-TK",angkatan:2025}
+];
 
-const today = new Date().toISOString().split("T")[0];
-document.getElementById("pilihTanggal").value = today;
+const today=new Date().toISOString().split("T")[0];
+document.getElementById("tanggal").value=today;
+let mood="";
 
 document.querySelectorAll(".mood").forEach(m=>{
-    m.onclick=()=>{
-        document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
-        m.classList.add("active");
-        moodDipilih=m.dataset ? m.dataset.mood : m.getAttribute("data");
-        moodDipilih=m.getAttribute("data");
-    }
+ m.onclick=()=>{
+   document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+   m.classList.add("active");
+   mood=m.getAttribute("data");
+ }
 });
 
-function getData(){
-    return JSON.parse(localStorage.getItem("absensiHarian")) || {};
+function hitungKelas(s){
+ const tahun=new Date().getFullYear();
+ if(s.jenjang==="Pra-TK") return "Pra-TK";
+ if(s.jenjang==="TK"){
+   return (tahun-s.angkatan)<=0?"TK A":"TK B";
+ }
+ if(s.jenjang==="SD") return tahun-s.angkatan+1;
+ if(s.jenjang==="SMP") return tahun-s.angkatan+7;
 }
 
-function simpan(){
-    const nama=namaInput.value;
-    const kelas=kelasInput.value;
-    const tujuan=tujuanSelect.value;
-
-    if(!nama||!kelas||!tujuan||!moodDipilih){
-        alert("Lengkapi semua 😡");
-        return;
-    }
-
-    const allData=getData();
-    if(!allData[today]) allData[today]=[];
-
-    allData[today].push({
-        nama,kelas,tujuan,
-        mood:moodDipilih,
-        waktu:new Date().toLocaleTimeString()
-    });
-
-    localStorage.setItem("absensiHarian",JSON.stringify(allData));
-    tampil();
-    showTab("data");
+function updateKelas(){
+ const j=jenjang.value;
+ kelas.innerHTML='<option value="">Pilih Kelas</option>';
+ [...new Set(siswa.filter(s=>s.jenjang===j).map(s=>hitungKelas(s)))]
+ .forEach(k=>kelas.innerHTML+=`<option>${k}</option>`);
 }
 
-function tampil(){
-    const tanggal=document.getElementById("pilihTanggal").value;
-    const list=document.getElementById("list");
-    list.innerHTML="";
-
-    const allData=getData();
-    const data=allData[tanggal]||[];
-
-    if(data.length===0){
-        list.innerHTML=`<tr><td colspan="6">Tidak ada data</td></tr>`;
-        return;
-    }
-
-    data.forEach((a,i)=>{
-        list.innerHTML+=`
-        <tr>
-        <td>${i+1}</td>
-        <td>${a.nama}</td>
-        <td>${a.kelas}</td>
-        <td>${a.tujuan}</td>
-        <td>${a.mood}</td>
-        <td>${a.waktu}</td>
-        </tr>`;
-    });
+function updateNama(){
+ nama.innerHTML='<option value="">Pilih Nama</option>';
+ siswa.filter(s=>s.jenjang===jenjang.value && hitungKelas(s)==kelas.value)
+ .forEach(s=>nama.innerHTML+=`<option>${s.nama}</option>`);
 }
 
-function showTab(tab){
-    form.style.display = tab==="form"?"block":"none";
-    data.style.display = tab==="data"?"block":"none";
-    btnForm.classList.toggle("active",tab==="form");
-    btnData.classList.toggle("active",tab==="data");
-    tampil();
+function absen(){
+ if(!nama.value||!mood){alert("Lengkapi ya 😡");return;}
+ const data=JSON.parse(localStorage.getItem("absensi"))||{};
+ if(!data[tanggal.value]) data[tanggal.value]=[];
+ data[tanggal.value].push({
+   nama:nama.value,jenjang:jenjang.value,
+   kelas:kelas.value,mood,waktu:new Date().toLocaleTimeString()
+ });
+ localStorage.setItem("absensi",JSON.stringify(data));
+ tampilData();
 }
 
-const namaInput=document.getElementById("nama");
-const kelasInput=document.getElementById("kelas");
-const tujuanSelect=document.getElementById("tujuan");
-
-tampil();
+function tampilData(){
+ const data=JSON.parse(localStorage.getItem("absensi"))||{};
+ const d=data[tanggal.value]||[];
+ list.innerHTML=d.length?d.map((x,i)=>`
+<tr>
+<td>${i+1}</td><td>${x.nama}</td><td>${x.jenjang}</td>
+<td>${x.kelas}</td><td>${x.mood}</td><td>${x.waktu}</td>
+</tr>`).join(""):`<tr><td colspan="6">Belum ada data</td></tr>`;
+}
+tampilData();
 </script>
 
 </body>
