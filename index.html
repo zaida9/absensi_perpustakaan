@@ -159,7 +159,7 @@ function simpan(){
     if(!allData[today]) allData[today]=[];
 
     allData[today].push({
-        jenjang,kelas,nama,tujuan,
+        nama,jenjang,kelas,tujuan,
         mood:moodDipilih,
         waktu:new Date().toLocaleTimeString()
     });
@@ -185,9 +185,9 @@ function tampil(){
         list.innerHTML+=`
         <tr>
         <td>${i+1}</td>
+         <td>${a.nama}</td>
         <td>${a.jenjang}</td>
         <td>${a.kelas}</td>
-        <td>${a.nama}</td>
         <td>${a.tujuan}</td>
         <td>${a.mood}</td>
         <td>${a.waktu}</td>
