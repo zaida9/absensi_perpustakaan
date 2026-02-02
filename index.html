@@ -209,5 +209,27 @@ function showTab(tab){
 tampil();
 </script>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+ const firebaseConfig = {
+  apiKey: "AIzaSyDPk6cKUYIPeuZeWqPlu3Y6q-fnguQ3v9w",
+  authDomain: "perpustakaan-lazuardi.firebaseapp.com",
+  projectId: "perpustakaan-lazuardi",
+  storageBucket: "perpustakaan-lazuardi.firebasestorage.app",
+  messagingSenderId: "541956215385",
+  appId: "1:541956215385:web:777c8dcc2383fac3ffd748",
+  measurementId: "G-ZV33FJXERV"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  console.log("Firebase siap 🔥");
+</script>
+
+    
 </body>
 </html>
