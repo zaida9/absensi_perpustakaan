@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins&display=swap" rel="stylesheet">
 
 <style>
+/* === CSS ASLI KAMU (TIDAK DIUBAH) === */
 body{
     font-family:'Poppins',sans-serif;
     background:linear-gradient(135deg,#a8edea,#fed6e3);
@@ -69,9 +70,8 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <!-- FORM -->
 <div id="form" class="card">
-
 <input id="nama" placeholder="Nama">
-    
+
 <select id="jenjang">
 <option value="">Pilih Jenjang</option>
 <option>Pra TK</option>
@@ -82,8 +82,7 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <option>Karyawan</option>
 </select>
 
-<input id="kelas" placeholder="Kelas (contoh: A, 1A, 7B)">
-
+<input id="kelas" placeholder="Kelas">
 
 <select id="tujuan">
 <option value="">Tujuan</option>
@@ -107,129 +106,89 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <!-- DATA -->
 <div id="data" class="card" style="display:none">
-<h3 style="text-align:center;font-family:Fredoka;color:#6b46c1">📅 Pilih Tanggal</h3>
-
 <input type="date" id="pilihTanggal" onchange="tampil()">
 
 <table>
 <thead>
 <tr>
-<th>No</th>
-<th>Nama</th>
-<th>Jenjang</th>
-<th>Kelas</th>
-<th>Tujuan</th>
-<th>Mood</th>
-<th>Waktu</th>
+<th>No</th><th>Nama</th><th>Jenjang</th><th>Kelas</th><th>Tujuan</th><th>Mood</th><th>Waktu</th>
 </tr>
 </thead>
 <tbody id="list"></tbody>
 </table>
 </div>
-
 </div>
+
+<!-- 🔥 FIREBASE WAJIB DI ATAS -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } 
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDPk6cKUYIPeuZeWqPlu3Y6q-fnguQ3v9w",
+  authDomain: "perpustakaan-lazuardi.firebaseapp.com",
+  projectId: "perpustakaan-lazuardi",
+  storageBucket: "perpustakaan-lazuardi.appspot.com",
+  messagingSenderId: "541956215385",
+  appId: "1:541956215385:web:777c8dcc2383fac3ffd748"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.addDoc = addDoc;
+window.collection = collection;
+window.getDocs = getDocs;
+window.query = query;
+window.where = where;
+</script>
 
 <script>
 let moodDipilih="";
-
 const today = new Date().toISOString().split("T")[0];
 document.getElementById("pilihTanggal").value = today;
 
 document.querySelectorAll(".mood").forEach(m=>{
-    m.onclick=()=>{
-        document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
-        m.classList.add("active");
-        moodDipilih=m.dataset.mood;
-    }
+  m.onclick=()=>{
+    document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+    m.classList.add("active");
+    moodDipilih=m.dataset.mood;
+  }
 });
 
-function getData(){
-    return JSON.parse(localStorage.getItem("absensiHarian")) || {};
+async function simpan(){
+  await addDoc(collection(db,"absensi"),{
+    nama:nama.value,
+    jenjang:jenjang.value,
+    kelas:kelas.value,
+    tujuan:tujuan.value,
+    mood:moodDipilih,
+    tanggal:today,
+    waktu:new Date().toLocaleTimeString()
+  });
+  showTab("data");
 }
 
-function simpan(){
-    const nama=document.getElementById("nama").value;
-    const jenjang=document.getElementById("jenjang").value;
-    const kelas=document.getElementById("kelas").value;
-    const tujuan=document.getElementById("tujuan").value;
-
-    if(!jenjang||!nama||!tujuan||!moodDipilih){
-        alert("Lengkapi semua data 😡");
-        return;
-    }
-
-    const allData=getData();
-    if(!allData[today]) allData[today]=[];
-
-    allData[today].push({
-        nama,jenjang,kelas,tujuan,
-        mood:moodDipilih,
-        waktu:new Date().toLocaleTimeString()
-    });
-
-    localStorage.setItem("absensiHarian",JSON.stringify(allData));
-    showTab("data");
+async function tampil(){
+  list.innerHTML="";
+  const q=query(collection(db,"absensi"),where("tanggal","==",pilihTanggal.value));
+  const snap=await getDocs(q);
+  let i=1;
+  snap.forEach(d=>{
+    const a=d.data();
+    list.innerHTML+=`
+    <tr><td>${i++}</td><td>${a.nama}</td><td>${a.jenjang}</td>
+    <td>${a.kelas}</td><td>${a.tujuan}</td><td>${a.mood}</td><td>${a.waktu}</td></tr>`;
+  });
 }
 
-function tampil(){
-    const tanggal=document.getElementById("pilihTanggal").value;
-    const list=document.getElementById("list");
-    list.innerHTML="";
-
-    const allData=getData();
-    const data=allData[tanggal]||[];
-
-    if(data.length===0){
-        list.innerHTML=`<tr><td colspan="7">Tidak ada data</td></tr>`;
-        return;
-    }
-
-    data.forEach((a,i)=>{
-        list.innerHTML+=`
-        <tr>
-        <td>${i+1}</td>
-         <td>${a.nama}</td>
-        <td>${a.jenjang}</td>
-        <td>${a.kelas}</td>
-        <td>${a.tujuan}</td>
-        <td>${a.mood}</td>
-        <td>${a.waktu}</td>
-        </tr>`;
-    });
+function showTab(t){
+  form.style.display=t==="form"?"block":"none";
+  data.style.display=t==="data"?"block":"none";
+  tampil();
 }
-
-function showTab(tab){
-    form.style.display = tab==="form"?"block":"none";
-    data.style.display = tab==="data"?"block":"none";
-    btnForm.classList.toggle("active",tab==="form");
-    btnData.classList.toggle("active",tab==="data");
-    tampil();
-}
-
-tampil();
 </script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-
-<script>
- const firebaseConfig = {
-  apiKey: "AIzaSyDPk6cKUYIPeuZeWqPlu3Y6q-fnguQ3v9w",
-  authDomain: "perpustakaan-lazuardi.firebaseapp.com",
-  projectId: "perpustakaan-lazuardi",
-  storageBucket: "perpustakaan-lazuardi.firebasestorage.app",
-  messagingSenderId: "541956215385",
-  appId: "1:541956215385:web:777c8dcc2383fac3ffd748",
-  measurementId: "G-ZV33FJXERV"
-};
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  console.log("Firebase siap 🔥");
-</script>
-
-    
 </body>
 </html>
