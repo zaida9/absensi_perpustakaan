@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins&display=swap" rel="stylesheet">
 
 <style>
-/* === CSS ASLI KAMU (TIDAK DIUBAH) === */
+/* CSS ASLI KAMU – TIDAK DIUBAH */
 body{
     font-family:'Poppins',sans-serif;
     background:linear-gradient(135deg,#a8edea,#fed6e3);
@@ -68,7 +68,6 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <button id="btnData" onclick="showTab('data')">📊 Data</button>
 </div>
 
-<!-- FORM -->
 <div id="form" class="card">
 <input id="nama" placeholder="Nama">
 
@@ -104,14 +103,14 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <button class="submit" onclick="simpan()">Klik disini ya! 🤗</button>
 </div>
 
-<!-- DATA -->
 <div id="data" class="card" style="display:none">
 <input type="date" id="pilihTanggal" onchange="tampil()">
 
 <table>
 <thead>
 <tr>
-<th>No</th><th>Nama</th><th>Jenjang</th><th>Kelas</th><th>Tujuan</th><th>Mood</th><th>Waktu</th>
+<th>No</th><th>Nama</th><th>Jenjang</th><th>Kelas</th>
+<th>Tujuan</th><th>Mood</th><th>Waktu</th>
 </tr>
 </thead>
 <tbody id="list"></tbody>
@@ -119,7 +118,6 @@ tbody tr:nth-child(even){background:#f7f7ff}
 </div>
 </div>
 
-<!-- 🔥 FIREBASE WAJIB DI ATAS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where } 
@@ -137,22 +135,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// 🔑 HUBUNGKAN KE SCRIPT BIASA
-window.db = db;
-window.addDoc = addDoc;
-window.collection = collection;
-window.getDocs = getDocs;
-window.query = query;
-window.where = where;
-</script>
-
-<script>
 let moodDipilih="";
 const today = new Date().toISOString().split("T")[0];
-document.getElementById("pilihTanggal").value = today;
+pilihTanggal.value = today;
 
 document.querySelectorAll(".mood").forEach(m=>{
   m.onclick=()=>{
@@ -163,6 +148,11 @@ document.querySelectorAll(".mood").forEach(m=>{
 });
 
 async function simpan(){
+  if(!nama.value || !jenjang.value || !tujuan.value || !moodDipilih){
+    alert("Lengkapi semua data 😡");
+    return;
+  }
+
   await addDoc(collection(db,"absensi"),{
     nama:nama.value,
     jenjang:jenjang.value,
@@ -172,6 +162,7 @@ async function simpan(){
     tanggal:today,
     waktu:new Date().toLocaleTimeString()
   });
+
   showTab("data");
 }
 
@@ -183,16 +174,25 @@ async function tampil(){
   snap.forEach(d=>{
     const a=d.data();
     list.innerHTML+=`
-    <tr><td>${i++}</td><td>${a.nama}</td><td>${a.jenjang}</td>
-    <td>${a.kelas}</td><td>${a.tujuan}</td><td>${a.mood}</td><td>${a.waktu}</td></tr>`;
+    <tr>
+      <td>${i++}</td><td>${a.nama}</td><td>${a.jenjang}</td>
+      <td>${a.kelas}</td><td>${a.tujuan}</td>
+      <td>${a.mood}</td><td>${a.waktu}</td>
+    </tr>`;
   });
 }
 
+window.simpan = simpan;
+window.tampil = tampil;
+</script>
+
+<script>
 function showTab(t){
   form.style.display=t==="form"?"block":"none";
   data.style.display=t==="data"?"block":"none";
   tampil();
 }
 </script>
+
 </body>
 </html>
