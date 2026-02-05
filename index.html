@@ -110,13 +110,15 @@ tbody tr:nth-child(even){background:#f7f7ff}
 <thead>
 <tr>
 <th>No</th><th>Nama</th><th>Jenjang</th><th>Kelas</th>
-<th>Tujuan</th><th>Mood</th><th>Hari</th><th>Jam</th>
+<th>Tujuan</th><th>Mood</th><th>Waktu</th>
 </tr>
 </thead>
 <tbody id="list"></tbody>
 </table>
 
+<!-- TAMBAHAN REKAP -->
 <div id="rekap" style="margin-top:20px;font-family:'Fredoka'"></div>
+
 </div>
 </div>
 
@@ -141,8 +143,6 @@ let moodDipilih="";
 const today = new Date().toISOString().split("T")[0];
 pilihTanggal.value = today;
 
-const namaHari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-
 document.querySelectorAll(".mood").forEach(m=>{
   m.onclick=()=>{
     document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
@@ -157,8 +157,6 @@ async function simpan(){
     return;
   }
 
-  const now = new Date();
-
   await addDoc(collection(db,"absensi"),{
     nama:nama.value,
     jenjang:jenjang.value,
@@ -166,8 +164,7 @@ async function simpan(){
     tujuan:tujuan.value,
     mood:moodDipilih,
     tanggal:today,
-    hari:namaHari[now.getDay()],
-    jam:now.toLocaleTimeString()
+    waktu:new Date().toLocaleTimeString()
   });
 
   showTab("data");
@@ -184,11 +181,12 @@ async function tampil(){
     <tr>
       <td>${i++}</td><td>${a.nama}</td><td>${a.jenjang}</td>
       <td>${a.kelas}</td><td>${a.tujuan}</td>
-      <td>${a.mood}</td><td>${a.hari}</td><td>${a.jam}</td>
+      <td>${a.mood}</td><td>${a.waktu}</td>
     </tr>`;
   });
 }
 
+/* ===== REKAP TOP 3 BULANAN ===== */
 async function rekapBulanan(){
   const bulanIni = new Date().toISOString().slice(0,7);
   const snap = await getDocs(collection(db,"absensi"));
@@ -220,6 +218,7 @@ async function rekapBulanan(){
 
   rekap.innerHTML = html;
 }
+/* =============================== */
 
 window.simpan = simpan;
 window.tampil = tampil;
