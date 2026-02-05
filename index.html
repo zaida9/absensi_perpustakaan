@@ -93,4 +93,146 @@ tbody tr:nth-child(even){background:#f7f7ff}
 
 <div class="moods">
 <div class="mood" data-mood="😄 Senang">😄</div>
-<div class="mood" data-mood="😢 Sedih">😢
+<div class="mood" data-mood="😢 Sedih">😢</div>
+<div class="mood" data-mood="😡 Marah">😡</div>
+<div class="mood" data-mood="😴 Lelah">😴</div>
+<div class="mood" data-mood="🤯 Terkejut">🤯</div>
+<div class="mood" data-mood="😐 Biasa">😐</div>
+</div>
+
+<button class="submit" onclick="simpan()">Klik disini ya! 🤗</button>
+</div>
+
+<div id="data" class="card" style="display:none">
+<input type="date" id="pilihTanggal" onchange="tampil()">
+
+<table>
+<thead>
+<tr>
+<th>No</th><th>Nama</th><th>Jenjang</th><th>Kelas</th>
+<th>Tujuan</th><th>Mood</th><th>Waktu</th>
+</tr>
+</thead>
+<tbody id="list"></tbody>
+</table>
+
+<!-- TAMBAHAN REKAP -->
+<div id="rekap" style="margin-top:20px;font-family:'Fredoka'"></div>
+
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } 
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDPk6cKUYIPeuZeWqPlu3Y6q-fnguQ3v9w",
+  authDomain: "perpustakaan-lazuardi.firebaseapp.com",
+  projectId: "perpustakaan-lazuardi",
+  storageBucket: "perpustakaan-lazuardi.appspot.com",
+  messagingSenderId: "541956215385",
+  appId: "1:541956215385:web:777c8dcc2383fac3ffd748"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let moodDipilih="";
+const today = new Date().toISOString().split("T")[0];
+pilihTanggal.value = today;
+
+document.querySelectorAll(".mood").forEach(m=>{
+  m.onclick=()=>{
+    document.querySelectorAll(".mood").forEach(x=>x.classList.remove("active"));
+    m.classList.add("active");
+    moodDipilih=m.dataset.mood;
+  }
+});
+
+async function simpan(){
+  if(!nama.value || !jenjang.value || !tujuan.value || !moodDipilih){
+    alert("Lengkapi semua data 😡");
+    return;
+  }
+
+  await addDoc(collection(db,"absensi"),{
+    nama:nama.value,
+    jenjang:jenjang.value,
+    kelas:kelas.value,
+    tujuan:tujuan.value,
+    mood:moodDipilih,
+    tanggal:today,
+    waktu:new Date().toLocaleTimeString()
+  });
+
+  showTab("data");
+}
+
+async function tampil(){
+  list.innerHTML="";
+  const q=query(collection(db,"absensi"),where("tanggal","==",pilihTanggal.value));
+  const snap=await getDocs(q);
+  let i=1;
+  snap.forEach(d=>{
+    const a=d.data();
+    list.innerHTML+=`
+    <tr>
+      <td>${i++}</td><td>${a.nama}</td><td>${a.jenjang}</td>
+      <td>${a.kelas}</td><td>${a.tujuan}</td>
+      <td>${a.mood}</td><td>${a.waktu}</td>
+    </tr>`;
+  });
+}
+
+/* ===== REKAP TOP 3 BULANAN ===== */
+async function rekapBulanan(){
+  const bulanIni = new Date().toISOString().slice(0,7);
+  const snap = await getDocs(collection(db,"absensi"));
+
+  let hitung = {};
+
+  snap.forEach(d=>{
+    const a = d.data();
+    if(a.tanggal.startsWith(bulanIni)){
+      if(!hitung[a.nama]) hitung[a.nama] = 0;
+      hitung[a.nama]++;
+    }
+  });
+
+  const urutan = Object.entries(hitung)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,3);
+
+  if(urutan.length === 0){
+    rekap.innerHTML = "Belum ada data bulan ini 😢";
+    return;
+  }
+
+  let html = "📊 Top 3 Pengunjung Bulan Ini:<br>";
+
+  urutan.forEach((item, index)=>{
+    html += `${index+1}. <b>${item[0]}</b> (${item[1]} kali hadir)<br>`;
+  });
+
+  rekap.innerHTML = html;
+}
+/* =============================== */
+
+window.simpan = simpan;
+window.tampil = tampil;
+window.rekapBulanan = rekapBulanan;
+</script>
+
+<script>
+function showTab(t){
+  form.style.display=t==="form"?"block":"none";
+  data.style.display=t==="data"?"block":"none";
+  tampil();
+  rekapBulanan();
+}
+</script>
+
+</body>
+</html>
