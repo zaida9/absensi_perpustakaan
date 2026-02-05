@@ -115,6 +115,10 @@ tbody tr:nth-child(even){background:#f7f7ff}
 </thead>
 <tbody id="list"></tbody>
 </table>
+
+<!-- TAMBAHAN REKAP (TIDAK MENGUBAH KODE ASLI) -->
+<div id="rekap" style="margin-top:20px;font-family:'Fredoka'"></div>
+
 </div>
 </div>
 
@@ -182,8 +186,41 @@ async function tampil(){
   });
 }
 
+/* ================= TAMBAHAN FITUR REKAP BULANAN ================= */
+async function rekapBulanan(){
+  const bulanIni = new Date().toISOString().slice(0,7);
+  const snap = await getDocs(collection(db,"absensi"));
+
+  let hitung = {};
+
+  snap.forEach(d=>{
+    const a = d.data();
+    if(a.tanggal.startsWith(bulanIni)){
+      if(!hitung[a.nama]) hitung[a.nama] = 0;
+      hitung[a.nama]++;
+    }
+  });
+
+  let namaTerbanyak = "-";
+  let jumlah = 0;
+
+  for(const n in hitung){
+    if(hitung[n] > jumlah){
+      jumlah = hitung[n];
+      namaTerbanyak = n;
+    }
+  }
+
+  rekap.innerHTML = `
+    📊 Pengunjung Terbanyak Bulan Ini:<br>
+    <b>${namaTerbanyak}</b> (${jumlah} kali hadir)
+  `;
+}
+/* ================================================================ */
+
 window.simpan = simpan;
 window.tampil = tampil;
+window.rekapBulanan = rekapBulanan;
 </script>
 
 <script>
@@ -191,6 +228,7 @@ function showTab(t){
   form.style.display=t==="form"?"block":"none";
   data.style.display=t==="data"?"block":"none";
   tampil();
+  rekapBulanan(); // tambahan aman
 }
 </script>
 
